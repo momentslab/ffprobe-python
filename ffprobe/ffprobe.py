@@ -42,6 +42,7 @@ class FFProbe:
             self.audio = []
             self.subtitle = []
             self.attachment = []
+            self.timecode = None
 
             for line in iter(p.stdout.readline, b''):
                 line = line.decode('UTF-8', 'ignore')
@@ -92,6 +93,11 @@ class FFProbe:
                 elif stream:
                     data_lines.append(line)
 
+                if 'timecode' in line:
+                    if match := re.search('(\d\d:\d\d:\d\d:\d\d)', line, re.IGNORECASE):
+                        self.timecode = match.group(1)
+
+
             p.stdout.close()
             p.stderr.close()
 
@@ -108,7 +114,7 @@ class FFProbe:
             raise IOError('No such media file or stream is not responding: ' + self.path_to_video)
 
     def __repr__(self):
-        return "<FFprobe: {metadata}, {video}, {audio}, {subtitle}, {attachment}>".format(**vars(self))
+        return "<FFprobe: {metadata}, {video}, {audio}, {subtitle}, {attachment}, {timecode}>".format(**vars(self))
 
 
 class FFStream:
