@@ -32,6 +32,8 @@ def test_video ():
                 print('\t\tDuration:', stream.duration_seconds())
                 print('\t\tFrames:', stream.frames())
                 print('\t\tIs video:', stream.is_video())
+                if stream.is_audio():
+                    print('\t\tAudio channel layout:', stream.audio_channel_layout())
             except FFProbeError as e:
                 print(e)
             except Exception as e:
@@ -52,6 +54,8 @@ def test_stream ():
                 print('\t\tDuration:', stream.duration_seconds())
                 print('\t\tFrames:', stream.frames())
                 print('\t\tIs video:', stream.is_video())
+                if stream.is_audio():
+                    print('\t\tAudio channel layout:', stream.audio_channel_layout())
             except FFProbeError as e:
                 print(e)
             except Exception as e:

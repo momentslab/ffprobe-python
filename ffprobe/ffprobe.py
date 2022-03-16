@@ -223,6 +223,12 @@ class FFStream:
 
         return frame_count
 
+    def audio_channel_layout(self):
+        """
+        Display a string of the audio channel, ie: mono, stereo, quad
+        """
+        return self.__dict__.get('channel_layout', None)
+
     def duration_seconds(self):
         """
         Returns the runtime duration of the video stream as a floating point number of seconds.
