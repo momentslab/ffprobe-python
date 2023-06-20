@@ -130,7 +130,7 @@ class FFStream:
                 self.__dict__['framerate'] = round(
                     functools.reduce(
                         operator.truediv, map(int, self.__dict__.get('avg_frame_rate', '').split('/'))
-                    )
+                    ), 2
                 )
 
             except ValueError:
