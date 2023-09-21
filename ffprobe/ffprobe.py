@@ -8,6 +8,7 @@ import pipes
 import platform
 import re
 import subprocess
+from typing import Optional
 
 from ffprobe.exceptions import FFProbeError
 
@@ -126,17 +127,11 @@ class FFStream:
         for line in data_lines:
             self.__dict__.update({key: value for key, value, *_ in [line.strip().split('=')]})
 
-            try:
-                self.__dict__['framerate'] = round(
-                    functools.reduce(
-                        operator.truediv, map(int, self.__dict__.get('avg_frame_rate', '').split('/'))
-                    ), 2
-                )
+            frame_rate = self._frame_rate_from('avg_frame_rate')
+            if frame_rate is None or frame_rate == 0:
+                frame_rate = self._frame_rate_from('r_frame_rate')
 
-            except ValueError:
-                self.__dict__['framerate'] = None
-            except ZeroDivisionError:
-                self.__dict__['framerate'] = 0
+            self.__dict__['framerate'] = frame_rate
 
     def __repr__(self):
         if self.is_video():
@@ -153,6 +148,17 @@ class FFStream:
             template = ''
 
         return template.format(**self.__dict__)
+
+    def _frame_rate_from(self, metadata: str) -> Optional[float]:
+        try:
+            return round(
+                functools.reduce(operator.truediv, map(int, self.__dict__.get(metadata, '').split('/'))),
+                2
+            )
+        except ValueError:
+            return None
+        except ZeroDivisionError:
+            return 0
 
     def is_audio(self):
         """
