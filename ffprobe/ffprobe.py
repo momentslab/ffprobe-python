@@ -58,11 +58,7 @@ class FFProbe:
                     # noinspection PyUnboundLocalVariable
                     self.streams.append(FFStream(data_lines))
                 elif stream:
-                    if '[SIDE_DATA]' in line:
-                        ignoreLine = True
-                    elif '[/SIDE_DATA]' in line:
-                        ignoreLine = False
-                    elif ignoreLine == False:
+                    if '=' in line and ignoreLine == False:
                         data_lines.append(line)
 
             self.metadata = {}
