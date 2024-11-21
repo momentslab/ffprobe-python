@@ -124,7 +124,7 @@ class FFStream:
             self.__dict__.update({key: value for key, value, *_ in [line.strip().split('=')]})
 
             frame_rate = self._frame_rate_from('avg_frame_rate')
-            if frame_rate is None or frame_rate == 0:
+            if frame_rate is None or frame_rate == 0 or frame_rate == "0/0":
                 frame_rate = self._frame_rate_from('r_frame_rate')
 
             self.__dict__['framerate'] = frame_rate
