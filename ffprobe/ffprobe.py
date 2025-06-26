@@ -60,8 +60,7 @@ class FFProbe:
                 elif '[/FORMAT]' in line and aggregate_lines:
                     aggregate_lines = False
                     self.format = FFFormat(data_lines)
-                elif aggregate_lines:
-                    if '=' in line:
+                elif aggregate_lines and '=' in line:
                         data_lines.append(line)
 
             self.metadata = {}
@@ -96,7 +95,7 @@ class FFProbe:
                 elif '[/FORMAT]' in line and aggregate_lines:
                     aggregate_lines = False
                     self.format = FFFormat(data_lines)
-                elif aggregate_lines:
+                elif aggregate_lines and '=' in line:
                     data_lines.append(line)
 
                 if 'timecode' in line:
