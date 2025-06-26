@@ -38,6 +38,8 @@ def test_video ():
                 print(e)
             except Exception as e:
                 print(e)
+        print(f"\tFormat:\n\t\tDuration: {media.format.duration}")
+
 
 def test_stream ():
     for test_stream in test_streams:

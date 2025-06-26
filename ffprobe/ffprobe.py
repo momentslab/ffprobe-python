@@ -30,14 +30,13 @@ class FFProbe:
 
         if os.path.isfile(self.path_to_video) or self.path_to_video.startswith('http'):
             if platform.system() == 'Windows':
-                cmd = ["ffprobe", "-show_streams", self.path_to_video]
+                cmd = ["ffprobe", "-show_streams", "-show_format", self.path_to_video]
             else:
                 cmd = ["ffprobe -show_streams " + pipes.quote(self.path_to_video)]
 
             p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 
-            stream = False
-            ignoreLine = False
+            aggregate_lines = False
             self.streams = []
             self.video = []
             self.audio = []
@@ -49,16 +48,20 @@ class FFProbe:
                 line = line.decode('UTF-8', 'ignore')
 
                 if '[STREAM]' in line:
-                    stream = True
-                    ignoreLine = False
+                    aggregate_lines = True
                     data_lines = []
-                elif '[/STREAM]' in line and stream:
+                elif '[/STREAM]' in line and aggregate_lines:
                     stream = False
-                    ignoreLine = False
                     # noinspection PyUnboundLocalVariable
                     self.streams.append(FFStream(data_lines))
-                elif stream:
-                    if '=' in line and ignoreLine == False:
+                elif '[FORMAT]' in line:
+                    aggregate_lines = True
+                    data_lines = []
+                elif '[/FORMAT]' in line and aggregate_lines:
+                    aggregate_lines = False
+                    self.format = FFFormat(data_lines)
+                elif aggregate_lines:
+                    if '=' in line:
                         data_lines.append(line)
 
             self.metadata = {}
@@ -82,12 +85,18 @@ class FFProbe:
                             self.metadata[m.groups()[0]] = m.groups()[1].strip()
 
                 if '[STREAM]' in line:
-                    stream = True
+                    aggregate_lines = True
                     data_lines = []
                 elif '[/STREAM]' in line and stream:
-                    stream = False
+                    aggregate_lines = False
                     self.streams.append(FFStream(data_lines))
-                elif stream:
+                elif '[FORMAT]' in line:
+                    aggregate_lines = True
+                    data_lines = []
+                elif '[/FORMAT]' in line and aggregate_lines:
+                    aggregate_lines = False
+                    self.format = FFFormat(data_lines)
+                elif aggregate_lines:
                     data_lines.append(line)
 
                 if 'timecode' in line:
@@ -113,6 +122,14 @@ class FFProbe:
     def __repr__(self):
         return "<FFprobe: {metadata}, {video}, {audio}, {subtitle}, {attachment}, {timecode}>".format(**vars(self))
 
+
+class FFFormat:
+    """
+    An object representation of the overall container format of a multimedia file.
+    """
+    def __init__(self, data_lines):
+        for line in data_lines:
+            self.__dict__.update({key: value for key, value, *_ in [line.strip().split('=')]})
 
 class FFStream:
     """
