@@ -27,8 +27,11 @@ def test_video ():
             try:
                 if stream.is_video():
                     frame_rate = stream.frames() / stream.duration_seconds()
-                    print('\t\tFrame Rate:', frame_rate)
-                    print('\t\tFrame Size:', stream.frame_size())
+                    print('\t\tFrame Rate :', frame_rate)
+                    print('\t\tFrame Size :', stream.frame_size())
+                    print('\t\tField order:', stream.field_order)
+                    print('\t\tProgressive:', stream.is_progressive())
+                    print('\t\tInterlaced :', stream.is_interlaced())
                 print('\t\tDuration:', stream.duration_seconds())
                 print('\t\tFrames:', stream.frames())
                 print('\t\tIs video:', stream.is_video())
@@ -53,6 +56,9 @@ def test_stream ():
                     frame_rate = stream.frames() / stream.duration_seconds()
                     print('\t\tFrame Rate:', frame_rate)
                     print('\t\tFrame Size:', stream.frame_size())
+                    print('\t\tField order:', stream.field_order)
+                    print('\t\tProgressive:', stream.is_progressive())
+                    print('\t\tInterlaced :', stream.is_interlaced())
                 print('\t\tDuration:', stream.duration_seconds())
                 print('\t\tFrames:', stream.frames())
                 print('\t\tIs video:', stream.is_video())

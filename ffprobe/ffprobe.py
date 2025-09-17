@@ -294,3 +294,13 @@ class FFStream:
             return int(self.__dict__.get('bit_rate', ''))
         except ValueError:
             raise FFProbeError('None integer bit_rate')
+
+    def is_progressive(self):
+        if self.is_video() and self.__dict__.get('field_order', "") == "progressive":
+            return True
+        return False
+
+    def is_interlaced(self):
+        if self.is_video() and self.__dict__.get('field_order', "") in ["tt", "bb", "tb", "bt"]:
+            return True
+        return False
